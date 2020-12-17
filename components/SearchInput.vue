@@ -1,6 +1,6 @@
 <template lang="pug">
   div
-    input(type="text" placeholder="Search..." v-model="inputData")
+    input(type="text" placeholder="Поиск..." v-model="inputData")
 </template>
 
 <script>
@@ -25,12 +25,7 @@ export default {
     inputData: {
       immediate: true,
       handler: debounce(function () {
-        // if (this.inputData === '') {
-        //   return
-        // }
-        console.log('before', this.inputData)
         this.$store.dispatch('filterNotes', this.inputData)
-        console.log('after')
       }, 130)
     }
   }
@@ -53,8 +48,8 @@ input
   &:focus
     outline none
     // border 1px solid green
-
-// .icon
-//   margin-right: 0.2rem;
-//   opacity 0.7
+  @media (max-width: 425px)
+    font-size 1.5rem
+    height 50px
+    padding-left 60px
 </style>

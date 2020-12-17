@@ -1,8 +1,8 @@
 <template lang="pug">
   .containerDatePicker
     .date-picker-wrapper
-      input.inputDatePicker(type="text" name="date-picker" placeholder="dd.mm.yyyy" v-model="inputValue" v-mask="'##.##.####'" @keyup.up="changeInput(true)" @keyup.down="changeInput(false)" :disabled="pickerState === 'disabled'" :readonly="pickerState === 'readonly'" ref="dateInput" :class="isError ? 'inputError' : ''" @blur="handleBlur")
-      span.close(@click="inputValueReset") &times;
+      input.inputDatePicker(type="text" name="date-picker" placeholder="Введите дату" v-model="inputValue" v-mask="'##.##.####'" @keyup.up="changeInput(true)" @keyup.down="changeInput(false)" :disabled="pickerState === 'disabled'" :readonly="pickerState === 'readonly'" ref="dateInput" :class="isError ? 'inputError' : ''" @blur="handleBlur")
+      //- span.close(@click="inputValueReset") &times;
       .calendarButton(@click="handleClick")
         font-awesome-icon(:icon="['far', 'calendar-alt']")
     calendar.drooped(v-if="showCalendar", v-bind:dateAttribute="cashedinputValue", @update-input="onUpdateInput" v-bind:disabledDay="disabledDay")
@@ -69,18 +69,6 @@ export default {
   created () {
   },
   watch: {
-    // inputDate: {
-    //   immediate: true,
-    //   handler () {
-    //     console.log('watch input Date', this.inputDate)
-    //     console.log('watch input Value', this.inputValue)
-    //     console.log('watch input cashedValue', this.cashedinputValue)
-    //     // this.inputValue = this.inputDate ? format(parse(this.inputDate, this.dateFormat.format, new Date()), this.displayFormat) : ''
-    //     // if (this.inputDate) {
-    //     //   console.log('konoyaro', format(parse(this.inputDate, this.dateFormat.format, new Date()), this.displayFormat))
-    //     // }
-    //   }
-    // },
     inputValue: {
       handler () {
         this.dateChoice()
@@ -118,6 +106,7 @@ export default {
           this.$emit('inputChanged', '')
           return
         }
+        this.inputValue = this.cashedinputValue
         this.$emit('inputChanged', format(parse(this.cashedinputValue, this.displayFormat, new Date()), this.dateFormat.format))
         // this.$emit('inputChanged', this.cashedinputValue)
       }

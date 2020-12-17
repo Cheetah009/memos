@@ -9,36 +9,8 @@ div.container
     button.container__inputBlock__button.pinkButtonBig(@click="onClickCreate")
       img.container__inputBlock__plusButton(:src="require(`~/assets/img/union.svg`)" @click="onClickFilter")
       span Создать
-  //- pop-up-modal(ref="modal")
-  //-   template(#popTitle) Отфильтровать
-  //-   template(#popBody) По дате
-  //-     div.calendars
-  //-       date-picker(v-bind:inputDate="dateStart", v-on:inputChanged="inputChangedStart", v-bind:disabledDay="disabledDayStart" :style="{ '--color': startColor }" :dateFormat="startFormat")
-  //-       date-picker(v-bind:inputDate="dateEnd", v-on:inputChanged="dateEnd = $event", v-bind:disabledDay="disabledDayEnd" :style="{ '--color': endColor }" :dateFormat="endFormat")
-  //-   template(#popButtons)
-  //-     button Применить
-  //-     button Сбросить
 
-  //- .memos
-    items-list(:data="filteredCollection" tag="div" itemTag="div")
-      template(#header) Заметки
-        nuxt-link.add-btn(:to="'/memos/add/'") {{ '+' }}
-      template(#item="{ item, index }")
-        nuxt-link.view-link(:to="'/memos/view/' + item.id") {{ item.title }}
-        div.subtitle {{ format(parse(item.date_create, 't', new Date()), 'dd.MM.yyyy') }}
-      template(#empty)
-        template(v-if="!errorMessage") Ой, пусто
-        template(v-else) {{ errorMessage }}
-      template(#tools="{ item, index }")
-        .threeDots(@click="toggleMenu(index)")
-        .menu(:class="{ menuClosed: openedElement !== index }")
-          .menu__content
-            //- nuxt-link(:to="'/memos/view/' + item.id") {{ 'View' }}
-            //- span {{ ' | ' }}
-            nuxt-link.menu__content__elem(:to="'/memos/edit/' + item.id") {{ 'Edit' }}
-            //- span {{ ' | ' }}
-            p.delete-btn.menu__content__elem(@click="deleteElem(item)") Delete
-      template(#footer)
+  .emptyNote(v-if="isEmpty") Ой, пусто!
 
   .memoContainer(ref="memoContainer")
     .memoElem(v-for="(elem, index) in filteredCollection")
@@ -72,13 +44,13 @@ div.container
     template(#popTitle)
       p.modalText Отфильтровать
     template(#popClose)
-      span(@click="onClickClose('filterNote')")
+      span(@click="$refs.filterNote.close")
         img(:src="require(`~/assets/img/closeButton.svg`)")
     template(#popBody)
       .filterBodyText По дате
       .datePickers
         .datePickers__content
-          date-picker(v-bind:inputDate="dateStart", v-on:inputChanged="dateStartCashed = $event", v-bind:disabledDay="disabledDayStart" :style="{ '--color': startColor }" :dateFormat="startFormat")
+          date-picker(v-bind:inputDate="dateStart", v-on:inputChanged="dateStartCashed = $event", v-bind:disabledDay="disabledDayStart" :style="{ '--color': startColor }" :dateFormat="startFormat" :value="dateStart")
           span c
         .datePickers__content
           date-picker(v-bind:inputDate="dateEnd", v-on:inputChanged="dateEndCashed = $event", v-bind:disabledDay="disabledDayEnd" :style="{ '--color': endColor }" :dateFormat="endFormat")
@@ -134,51 +106,45 @@ export default {
       calendarsOpenedText: '+ Открыть календари',
       editId: '',
       editData: {},
-      // masonryHeight: 2000,
-      windowHeight: 0
+      windowHeight: 0,
+      isEmpty: false
     }
   },
   watch: {
     filteredCollection: {
       // immediate: true,
       handler () {
-        // this.filteredCollection.slice()
-        // if (!this.masonryHeight) {
-        //   this.masonryHeight = 1000
-        // }
+        if (this.filteredCollection.length === 0) {
+          this.isEmpty = true
+        } else {
+          this.isEmpty = false
+        }
+        this.calculateMemosHeigth()
+      }
+    },
+    textToSearch: {
+      // immediate: true,
+      handler () {
         this.calculateMemosHeigth()
       }
     }
   },
   mounted () {
-    console.log('refsMemo', this.$refs)
-    console.log('refsMemo', this.$refs.memoContainer.children[0].clientHeight)
-    // this.$refs.memoContainer.style.height = this.masonryHeight + 'px'
-    console.log('mounted', this.determineMemosHeight)
     this.calculateMemosHeigth()
     this.$nextTick(function () {
       this.onResize()
       this.calculateMemosHeigth()
     })
     window.addEventListener('resize', this.onResize)
-    console.log('window eight', window.outerWidth)
     this.windowHeight = window.outerWidth
   },
   computed: {
     filteredCollection () {
-      // console.log('Filtered', this.$store.getters.getErrorMessage)
-      // if (!this.$store.state.error) {
-      //   return
-      // }
-      console.log('Route', this.$route.fullPath)
-      // debugger
       const array = this.$store.getters.getAllNotes
-      console.log('array', array)
       return array.filter((elem) => {
         if (this.dateStart === '' || this.dateEnd === '') {
           return true
         }
-        console.log('elem.date_create', elem.date_create, parse(this.dateEnd, this.endFormat.format, new Date()) / 1000)
         if (elem.date_create < parse(this.dateEnd, this.endFormat.format, new Date()) / 1000 &&
           elem.date_create >= parse(this.dateStart, this.startFormat.format, new Date()) / 1000) {
           return true
@@ -193,7 +159,6 @@ export default {
       let heightSecond = 0
       let heightThird = 0
       let i = 0
-      console.log(this.windowHeight)
       for (const elem of this.$refs.memoContainer.children) {
         if (this.windowHeight > 800) {
           // Можно сделать одной функцией через математику
@@ -222,24 +187,19 @@ export default {
       return Math.max(heightFirst, heightSecond, heightThird)
     }
   },
-  // watch: {
-  //   dateStartCashed () {
-  //     console.log('dateStartCashed', this.dateStartCashed)
-  //   }
-  // },
   methods: {
     onResize () {
-      console.log('Resized')
       this.windowHeight = window.outerWidth
       if (this.$refs.memoContainer) {
         this.calculateMemosHeigth()
       }
     },
     calculateMemosHeigth () {
-      console.log('Height Calculated')
       this.$refs.memoContainer.style.height = this.determineMemosHeight + 'px'
     },
     onClickCreate () {
+      debugger
+      this.$refs.filterNote.close()
       this.$refs.createNote.open()
       this.calculateMemosHeigth()
     },
@@ -248,11 +208,7 @@ export default {
       this.getEditData(id)
       this.$refs.editNote.open()
     },
-    onClickClose (modal) {
-      if (modal === 'filterNote') {
-        this.$refs[modal].close()
-        return
-      }
+    onClickClose () {
       this.$refs.confirmNote.open()
     },
     async getEditData (id) {
@@ -280,7 +236,6 @@ export default {
     onClickFilter () {
       this.$refs.filterNote.open()
       if (this.dateStartCashed) {
-        console.log('ddddd', this.dateStartCashed, this.dateStart)
         this.dateStart = this.dateStartCashed
       }
     },
@@ -290,13 +245,11 @@ export default {
       this.$refs.filterNote.close()
     },
     resetDatePickers () {
-      // console.log('resetDatePickers', this.dateStart, this.dateEnd)
       this.dateStart = ''
       this.dateEnd = ''
       this.dateStartCashed = ''
       this.dateEndCashed = ''
       this.$refs.filterNote.close()
-      // console.log('resetDatePickers', this.dateStart, this.dateEnd)
     },
     handleAdd (data) {
       if (data.title === '' || data.text === '') {
@@ -332,9 +285,6 @@ export default {
         alert('Ошибка: ', e)
       }
       alert('Удалено')
-    },
-    append () {
-      // console.log(this.$store.getters.get_db[0].text)
     },
     deleteElem (item) {
       try {
@@ -372,6 +322,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
 $myBlueDark = #3498db
 $myBlueLight = #3498db
 $myRed = #e74c3c
@@ -380,6 +331,12 @@ $myRedDark = #c0392b
 *
   font-family 'Roboto'
   color $black
+  @media (max-width: 425px)
+    font-size 1.5rem
+
+img
+  @media (max-width: 425px)
+    height 1.5rem
 
 $black = #333438
 $grey = #D8D8D8
@@ -402,6 +359,8 @@ $white = #FFFFFF
     margin-bottom 3rem
     @media (max-width: 800px)
       text-align center
+    @media (max-width: 425px)
+      font-size 4rem
   &__inputBlock
     display flex
     @media (max-width: 800px)
@@ -445,16 +404,18 @@ $white = #FFFFFF
   top 12px
   left 22px
   height 16px
-  width 16px
   cursor pointer
+  @media (max-width: 425px)
+    height 1.5rem
 
 .filterIcon
   position absolute
   top 12px
   right 22px
   height 16px
-  width 16px
   cursor pointer
+  @media (max-width: 425px)
+    height 1.5rem
 
 .modalTextBig
   font-weight 500
@@ -462,6 +423,7 @@ $white = #FFFFFF
   line-height: 42px;
   letter-spacing: 0.02em;
   margin 0
+  padding-right 20px
 
 .modalText
   font-weight 700
@@ -469,6 +431,9 @@ $white = #FFFFFF
   line-height: 26px;
   letter-spacing: 0.02em;
   margin 0
+
+.emptyNote
+  margin-top 20px
 
 .datePickers
   display flex
@@ -577,7 +542,12 @@ $white = #FFFFFF
     // @media (max-width: 800px)
     //   flex-direction column
   &__title
+    font-style: normal;
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 26px;
     margin: 0;
+    color $black
   &__tools
     @media (max-width: 800px)
       margin-top 10px
