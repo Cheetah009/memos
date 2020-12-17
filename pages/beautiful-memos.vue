@@ -198,7 +198,6 @@ export default {
       this.$refs.memoContainer.style.height = this.determineMemosHeight + 'px'
     },
     onClickCreate () {
-      debugger
       this.$refs.filterNote.close()
       this.$refs.createNote.open()
       this.calculateMemosHeigth()
