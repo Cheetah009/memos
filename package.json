@@ -11,10 +11,19 @@
     "lint": "npm run lint:js"
   },
   "dependencies": {
+    "@fortawesome/free-regular-svg-icons": "^5.15.1",
+    "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@nuxtjs/auth": "^4.9.1",
     "@nuxtjs/axios": "^5.12.2",
+    "@nuxtjs/fontawesome": "^1.1.2",
     "core-js": "^3.6.5",
-    "nuxt": "^2.14.6"
+    "date-fns": "^2.16.1",
+    "debounce": "^1.2.0",
+    "nuxt": "^2.14.6",
+    "v-mask": "^2.2.3",
+    "vue-imask": "^6.0.5",
+    "vue-masked-input": "^0.5.2",
+    "vue-masonry-wall": "^0.3.1"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.1.0",

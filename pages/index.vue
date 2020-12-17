@@ -2,7 +2,7 @@
   <div class="container">
     <div>
       <Logo />
-      <h1 class="title">
+      <!-- <h1 class="title">
         interview-task-vatutin
       </h1>
       <div class="links">
@@ -22,7 +22,7 @@
         >
           GitHub
         </a>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -32,10 +32,10 @@ export default {}
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
+/* .container { */
+  /* margin: 0 auto; */
+  /* min-height: 100vh; */
+  /* display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -61,5 +61,5 @@ export default {}
 
 .links {
   padding-top: 15px;
-}
+} */
 </style>

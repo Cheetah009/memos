@@ -7,7 +7,12 @@ export default {
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
     ],
-    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }],
+    link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Roboto&display=swap",
+      }
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -23,7 +28,23 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
+    '@nuxtjs/fontawesome'
   ],
+
+  fontawesome: {
+    icons: {
+      regular: [
+        'faCalendarAlt'
+      ],
+      solid: [
+        'faAngleRight',
+        'faAngleLeft',
+        'faAngleDoubleRight',
+        'faAngleDoubleLeft',
+        'faSearch'
+      ]
+    }
+  },
 
   axios: {
     baseURL: 'http://localhost:3000/api'
@@ -50,5 +71,7 @@ export default {
   },
   
   // Build Configuration (https://go.nuxtjs.dev/config-build)
-  build: {},
+  build: {
+    transpile: ['@nuxtjs/eslint-module', '@nuxtjs/fontawesome']
+  },
 }
