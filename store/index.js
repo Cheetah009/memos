@@ -32,7 +32,7 @@ export const actions = {
         return response.json()
       })
       .then((res) => {
-        console.log('result', res)
+        // console.log('result', res)
         commit('set_db', res)
       })
       .catch((error) => {
@@ -104,7 +104,7 @@ export const getters = {
   filter: s => s.filter,
   getAllNotes (state, getters) {
     return state.db.filter(({ title, text }) => getters.filter ? (() => {
-      console.log(title, text, getters.filter, title.startsWith(getters.filter))
+      // console.log(title, text, getters.filter, title.startsWith(getters.filter))
       return title.toLowerCase().startsWith(getters.filter.toLowerCase()) || text.toLowerCase().startsWith(getters.filter.toLowerCase())
     })() : true)
       .sort((a, b) => b.date_create - a.date_create)

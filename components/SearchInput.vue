@@ -1,6 +1,7 @@
 <template lang="pug">
   div
     input(type="text" placeholder="Поиск..." v-model="inputData")
+    //- @input="$emit('searchInputChanged', inputData)"
 </template>
 
 <script>
@@ -26,6 +27,7 @@ export default {
       immediate: true,
       handler: debounce(function () {
         this.$store.dispatch('filterNotes', this.inputData)
+        this.$emit('searchInputChanged', this.inputData)
       }, 130)
     }
   }

@@ -1,28 +1,17 @@
-<template>
-  <div class="container">
-    <div>
-      <Logo />
-      <!-- <h1 class="title">
-        interview-task-vatutin
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
-      </div> -->
+<template lang='pug'>
+  .container
+    Logo
+    div
+      p
+        NuxtLink(to="/date-picker") Date Picker
+      p
+        NuxtLink(to="/two-pickers") Two Pickers
+      p
+        NuxtLink(to="/items-list") Items List
+      p
+        NuxtLink(to="/memos") Memos
+      p
+        NuxtLink(to="/beautiful-memos") Beautiful Memos
     </div>
   </div>
 </template>
@@ -31,16 +20,17 @@
 export default {}
 </script>
 
-<style>
-/* .container { */
+<style scoped>
+.container {
   /* margin: 0 auto; */
   /* min-height: 100vh; */
-  /* display: flex;
+  display: flex;
   justify-content: center;
+  flex-direction: column;
   align-items: center;
   text-align: center;
 }
-
+/*
 .title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

@@ -3,11 +3,11 @@ div.container
   h1.container__title Мои заметки
   .container__inputBlock
     .container__inputBlock__block
-      search-input.container__inputBlock__input(v-model='textToSearch')
+      search-input.container__inputBlock__input(v-model='textToSearch' @searchInputChanged="searchChanged")
       img.searchIcon(:src="require(`~/assets/img/search.svg`)")
       img.filterIcon(:src="require(`~/assets/img/filter.svg`)" @click="onClickFilter")
     button.container__inputBlock__button.pinkButtonBig(@click="onClickCreate")
-      img.container__inputBlock__plusButton(:src="require(`~/assets/img/union.svg`)" @click="onClickFilter")
+      img.container__inputBlock__plusButton(:src="require(`~/assets/img/union.svg`)")
       span Создать
 
   .emptyNote(v-if="isEmpty") Ой, пусто!
@@ -74,6 +74,7 @@ import PopUpModal from '@/components/PopUpModal'
 import DatePicker from '@/components/DatePicker'
 import ItemsList from '@/components/ItemsList'
 import SearchInput from '@/components/SearchInput'
+// import Vue from 'vue'
 import { parse, format } from 'date-fns'
 
 export default {
@@ -107,7 +108,9 @@ export default {
       editId: '',
       editData: {},
       windowHeight: 0,
-      isEmpty: false
+      isEmpty: false,
+      searchValue: '',
+      prevHeight: ''
     }
   },
   watch: {
@@ -119,13 +122,13 @@ export default {
         } else {
           this.isEmpty = false
         }
-        this.calculateMemosHeigth()
+        // this.calculateMemosHeigth()
       }
     },
     textToSearch: {
       // immediate: true,
       handler () {
-        this.calculateMemosHeigth()
+        // this.calculateMemosHeigth()
       }
     }
   },
@@ -159,6 +162,9 @@ export default {
       let heightSecond = 0
       let heightThird = 0
       let i = 0
+      if (this.$refs.memoContainer && this.searchValue) {
+        console.log('changedSearchValue')
+      }
       for (const elem of this.$refs.memoContainer.children) {
         if (this.windowHeight > 800) {
           // Можно сделать одной функцией через математику
@@ -183,11 +189,29 @@ export default {
         }
         i++
       }
-
+      // console.log('determineHeight', heightFirst)
       return Math.max(heightFirst, heightSecond, heightThird)
     }
   },
   methods: {
+    searchChanged (searchData) {
+      this.searchValue = searchData
+      setTimeout(() => {
+        if (this.$refs.memoContainer) {
+          this.calculateMemosHeigth()
+        }
+      }, 140)
+      // if (this.$refs.memoContainer) {
+      // console.log('searchChanged')
+      // // if (this.searchValue === '') {
+      // // }
+      // this.searchValue = searchData
+      // this.$nextTick(() => {
+      //   console.log('nextTick')
+      //   this.calculateMemosHeigth()
+      // })
+      // // }
+    },
     onResize () {
       this.windowHeight = window.outerWidth
       if (this.$refs.memoContainer) {
@@ -198,7 +222,6 @@ export default {
       this.$refs.memoContainer.style.height = this.determineMemosHeight + 'px'
     },
     onClickCreate () {
-      this.$refs.filterNote.close()
       this.$refs.createNote.open()
       this.calculateMemosHeigth()
     },
@@ -234,9 +257,8 @@ export default {
     },
     onClickFilter () {
       this.$refs.filterNote.open()
-      if (this.dateStartCashed) {
-        this.dateStart = this.dateStartCashed
-      }
+      this.dateStart = ''
+      this.dateEnd = ''
     },
     applyDatePickers () {
       this.dateStart = this.dateStartCashed
@@ -432,7 +454,7 @@ $white = #FFFFFF
   margin 0
 
 .emptyNote
-  margin-top 20px
+  margin-top 40px
 
 .datePickers
   display flex
